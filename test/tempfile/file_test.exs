@@ -18,12 +18,18 @@ defmodule Tempfile.FileTest do
       1_000 -> flunk "didn't get a path"
     end
 
-    assert path =~ ~r/testfile.*\.png$/
+    assert File.exists?(path)
 
     receive do
       {:DOWN, ^ref, :process, ^pid, :normal} ->
         {:ok, _} = Temp.random("testfile.png")
         refute File.exists?(path)
     end
+  end
+
+  test "temporary files have globally unique names" do
+    {:ok, path} = Temp.random("testfile.txt")
+
+    assert path =~ ~r/testfile-\d+-\d+-\d+\.txt$/
   end
 end

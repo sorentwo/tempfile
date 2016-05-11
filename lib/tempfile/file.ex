@@ -1,4 +1,10 @@
 defmodule Tempfile.File do
+  @moduledoc """
+  The server responsible for generating random files with random
+  prefixes and ensuring that those files are cleaned up when the
+  calling process exits.
+  """
+
   use GenServer
 
   @max_attempts 10
@@ -8,9 +14,18 @@ defmodule Tempfile.File do
     GenServer.start_link(__MODULE__, :ok, [name: __MODULE__])
   end
 
-  @spec random(String.t) ::
-        {:ok, String.t} |
-        {:too_many_attempts, String.t, pos_integer}
+  @doc """
+  Requests a random file to be created in the tempfile directory based on the
+  provided filename. Files are placed in the environment specified temporary
+  directory, or in the local `/tmp` directory otherwise.
+
+  ## Example
+
+      iex> Tempfile.random("temporary.txt")
+      {:ok, "./tmp/temporary-12345-456789-3.txt"}
+  """
+  @spec random(String.t) :: {:ok, String.t} |
+                            {:too_many_attempts, String.t, pos_integer}
   def random(filename) do
     GenServer.call(tempfile_server(), {:random, filename})
   end
@@ -19,7 +34,7 @@ defmodule Tempfile.File do
 
   def init(:ok) do
     tmp = Enum.find_value(@tmp_env_vars, "/tmp", &System.get_env/1)
-    dir = Path.join(tmp, "rifle")
+    dir = Path.join(tmp, "tempfile")
 
     File.mkdir_p!(dir)
 
@@ -73,7 +88,6 @@ defmodule Tempfile.File do
         open_random_file(filename, tmp, attempts + 1, pid, map, paths)
     end
   end
-
   defp open_random_file(_filename, tmp, attempts, _pid, _map, _paths) do
     {:too_many_attempts, tmp, attempts}
   end

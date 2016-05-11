@@ -1,0 +1,2 @@
+defmodule Tempfile do
+end

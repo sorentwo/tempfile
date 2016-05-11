@@ -1,5 +1,7 @@
 # Tempfile
 
+[![Build Status](https://travis-ci.org/sorentwo/tempfile.svg?branch=master)](https://travis-ci.org/sorentwo/tempfile)
+
 `Tempfile` is a server specifically for managing temporary files. New random
 file are created in a temporary location and are automatically cleaned up when
 the requesting process exits.

@@ -1,11 +1,13 @@
-defmodule TempfileTest do
+defmodule Tempfile.FileTest do
   use ExUnit.Case
+
+  alias Tempfile.File, as: Temp
 
   test "random files are returned and removed on exit" do
     parent = self()
 
     {pid, ref} = spawn_monitor fn ->
-      {:ok, path} = Tempfile.random("testfile.png")
+      {:ok, path} = Temp.random("testfile.png")
       send parent, {:path, path}
       File.open!(path)
     end
@@ -20,7 +22,7 @@ defmodule TempfileTest do
 
     receive do
       {:DOWN, ^ref, :process, ^pid, :normal} ->
-        {:ok, _} = Tempfile.random("testfile.png")
+        {:ok, _} = Temp.random("testfile.png")
         refute File.exists?(path)
     end
   end

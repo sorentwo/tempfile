@@ -13,7 +13,7 @@ defmodule Tempfile.Mixfile do
      description: description,
      package: package,
 
-     deps: deps
+     deps: deps,
 
      name: "Tempfile",
      source_url: "https://github.com/sorentwo/tempfile",
@@ -23,7 +23,8 @@ defmodule Tempfile.Mixfile do
   end
 
   def application do
-    [applications: [:logger]]
+    [applications: [:logger],
+     mod: {Tempfile, []}]
   end
 
   defp deps do
